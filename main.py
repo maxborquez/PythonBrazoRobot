@@ -4,7 +4,7 @@ from tkinter import ttk
 # Crear la ventana principal
 root = tk.Tk()
 root.title("Antropomórfico CrisGo 6GDL")
-root.geometry("800x600")
+root.geometry("1350x680")
 
 # Sección 1: Conexión
 frame_conexion = ttk.LabelFrame(root, text="Conexión", padding="10")
@@ -78,11 +78,16 @@ btn_posicionar.grid(row=2, column=2, padx=5, pady=5)
 frame_panel = ttk.LabelFrame(root, text="Panel", padding="10")
 frame_panel.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-for i in range(1, 6):
-    tk.Button(frame_panel, text=f"Registro{i}").grid(row=i-1, column=0, padx=5, pady=5)
+# Registros de estados
+btn_r1 = tk.Button(frame_panel, text=f"Registro 1").grid(row=1, column=1, padx=5, pady=5)
+btn_r2 = tk.Button(frame_panel, text=f"Registro 2").grid(row=2, column=1, padx=5, pady=5)
+btn_r3 = tk.Button(frame_panel, text=f"Registro 3").grid(row=3, column=1, padx=5, pady=5)
+btn_r4 = tk.Button(frame_panel, text=f"Registro 4").grid(row=4, column=1, padx=5, pady=5)
+btn_r5 = tk.Button(frame_panel, text=f"Registro 5").grid(row=5, column=1, padx=5, pady=5)
 
-tk.Button(frame_panel, text="Ejecutar").grid(row=5, column=0, padx=5, pady=5)
-tk.Button(frame_panel, text="Limpiar").grid(row=6, column=0, padx=5, pady=5)
+btn_home = tk.Button(frame_panel, text="Home").grid(row=1, column=0, padx=5, pady=5)
+btn_ejecutar = tk.Button(frame_panel, text="Ejecutar").grid(row=2, column=0, padx=5, pady=5)
+btn_limpiar = tk.Button(frame_panel, text="Limpiar").grid(row=3, column=0, padx=5, pady=5)
 
 # Sección de gráficos (No funcional en este ejemplo)
 frame_graficos = ttk.LabelFrame(root, text="Gráficos", padding="10")
