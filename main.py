@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk
 import serial
 
-class RoboticArmControlApp:
+class ControlBrazoRobot:
     def __init__(self, ventana):
         self.ventana = ventana
         self.ventana.title("Control brazo robotico")
@@ -18,13 +18,13 @@ class RoboticArmControlApp:
         self.create_widgets()
 
     def create_widgets(self):
-        self.create_connection_section()
-        self.create_cinematic_section()
-        self.create_numeric_inputs_section()
-        self.create_panel_section()
-        self.create_graphics_section()
+        self.seccion_conexion()
+        self.seccion_2()
+        self.seccion_servos()
+        self.seccion_panel()
+        self.seccion_6()
 
-    def create_connection_section(self):
+    def seccion_conexion(self):
         label_conexion = tk.Label(self.ventana, text="Conexión", bg='#051333', fg='white', font=self.text_font)
         label_conexion.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
 
@@ -44,15 +44,15 @@ class RoboticArmControlApp:
         btn_cerrar = tk.Button(frame_conexion, text="Desconectar", font=self.button_font, command=self.click_desconectar)
         btn_cerrar.grid(row=4, column=0, padx=5, pady=5)
 
-    def create_cinematic_section(self):
+    def seccion_2(self):
         label_cinematica_directa = tk.Label(self.ventana, text="Seccion 2", bg='#051333', fg='white', font=self.text_font)
         label_cinematica_directa.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
 
         frame_cinematica_directa = tk.Frame(self.ventana, bg='#051333')
         frame_cinematica_directa.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
 
-    def create_numeric_inputs_section(self):
-        label_entradas = tk.Label(self.ventana, text="Entradas Numéricas", bg='#051333', fg='white', font=self.text_font)
+    def seccion_servos(self):
+        label_entradas = tk.Label(self.ventana, text="Servomotores", bg='#051333', fg='white', font=self.text_font)
         label_entradas.grid(row=0, column=2, padx=10, pady=5, sticky="nw")
 
         frame_entradas = tk.Frame(self.ventana, bg='#051333')
@@ -62,7 +62,7 @@ class RoboticArmControlApp:
             tk.Label(frame_entradas, text=f"Ángulos Servomotor {i + 1}", bg='#051333', fg='white', font=self.text_font).grid(row=i, column=0, padx=5, pady=5)
             tk.Spinbox(frame_entradas, from_=0, to=180).grid(row=i, column=1, padx=5, pady=5)
 
-    def create_panel_section(self):
+    def seccion_panel(self):
         label_panel = tk.Label(self.ventana, text="Panel", bg='#051333', fg='white', font=self.text_font)
         label_panel.grid(row=2, column=0, padx=10, pady=5, sticky="nw")
 
@@ -75,7 +75,7 @@ class RoboticArmControlApp:
             column = 0 if i < 5 else 1
             tk.Button(frame_panel, text=text, font=self.button_font).grid(row=row, column=column, padx=5, pady=5)
 
-    def create_graphics_section(self):
+    def seccion_6(self):
         label_graficos = tk.Label(self.ventana, text="Seccion 6", bg='#051333', fg='white', font=self.text_font)
         label_graficos.grid(row=2, column=2, padx=10, pady=5, sticky="nw")
 
@@ -123,7 +123,7 @@ class RoboticArmControlApp:
 
 def main():
     ventana = tk.Tk()
-    app = RoboticArmControlApp(ventana)
+    app = ControlBrazoRobot(ventana)
     ventana.mainloop()
 
 
