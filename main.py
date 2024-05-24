@@ -26,12 +26,8 @@ def click_conectar():
             SerialPort1.stopbits = serial.STOPBITS_ONE
             SerialPort1.port = combo_com.get()
             SerialPort1.open()
-            texto_estado["state"] = "normal"
-            texto_estado.delete(1.0, tk.END)
-            texto_estado.insert(1.0, "Conectado")
-            texto_estado.configure(bg="LIME")
+            label_estado.config(text="Conectado", bg="LIME")
             messagebox.showinfo(message="Puerto Conectado")
-            texto_estado["state"] = "disabled"
         except Exception as e:
             messagebox.showerror(message=f"Error al conectar: {e}")
     else:
@@ -40,12 +36,8 @@ def click_conectar():
 def click_desconectar():
     if SerialPort1.isOpen():
         SerialPort1.close()
-        texto_estado["state"] = "normal"
-        texto_estado.delete(1.0, tk.END)
-        texto_estado.insert(1.0, "Desconectado")
-        texto_estado.configure(bg="red")
+        label_estado.config(text="Desconectado", bg="red")
         messagebox.showinfo(message="Puerto Desconectado")
-        texto_estado["state"] = "disabled"
     else:
         messagebox.showinfo(message="El puerto ya está desconectado")
 
@@ -56,13 +48,11 @@ label_conexion.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
 frame_conexion = tk.Frame(root, bg='#051333')
 frame_conexion.grid(row=1, column=0, padx=10, pady=5, sticky="nw")
 
-# Texto para mostrar el estado de la conexión
-texto_estado = tk.Text(frame_conexion, height=1, width=20, font=text_font)
-texto_estado.grid(row=1, column=0, padx=5, pady=5)
-texto_estado.insert(1.0, "Desconectado")
-texto_estado.configure(state="disabled", bg="red")
+# Label para mostrar el estado de la conexión
+label_estado = tk.Label(frame_conexion, text="Desconectado", font=text_font, bg="red", fg="white", width=20)
+label_estado.grid(row=1, column=0, padx=5, pady=5)
 
-combo_com = ttk.Combobox(frame_conexion, values=["COM1", "COM2", "COM3", "COM4"])
+combo_com = ttk.Combobox(frame_conexion, values=["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"])
 combo_com.grid(row=2, column=0, padx=5, pady=5)
 combo_com.set("COM1")
 
