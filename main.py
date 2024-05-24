@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
+import serial
 
 # Crear la ventana principal
 root = tk.Tk()
@@ -12,6 +13,41 @@ root.geometry("1350x680")
 button_font = tkfont.Font(family="Arial", size=10, weight="bold")
 text_font = tkfont.Font(family="Arial", size=12, weight="bold")
 
+# Estado del puerto serial
+SerialPort1 = serial.Serial()
+
+# Funciones de conexión y desconexión
+def click_conectar():
+    if not SerialPort1.isOpen():
+        try:
+            SerialPort1.baudrate = 9600
+            SerialPort1.bytesize = 8
+            SerialPort1.parity = "N"
+            SerialPort1.stopbits = serial.STOPBITS_ONE
+            SerialPort1.port = combo_com.get()
+            SerialPort1.open()
+            texto_estado["state"] = "normal"
+            texto_estado.delete(1.0, tk.END)
+            texto_estado.insert(1.0, "Conectado")
+            texto_estado.configure(bg="LIME")
+            messagebox.showinfo(message="Puerto Conectado")
+            texto_estado["state"] = "disabled"
+        except Exception as e:
+            messagebox.showerror(message=f"Error al conectar: {e}")
+    else:
+        messagebox.showinfo(message="El puerto ya está conectado")
+
+def click_desconectar():
+    if SerialPort1.isOpen():
+        SerialPort1.close()
+        texto_estado["state"] = "normal"
+        texto_estado.delete(1.0, tk.END)
+        texto_estado.insert(1.0, "Desconectado")
+        texto_estado.configure(bg="red")
+        messagebox.showinfo(message="Puerto Desconectado")
+        texto_estado["state"] = "disabled"
+    else:
+        messagebox.showinfo(message="El puerto ya está desconectado")
 
 # Sección 1: Conexión
 label_conexion = tk.Label(root, text="Conexión", bg='#051333', fg='white', font=text_font)
@@ -20,15 +56,21 @@ label_conexion.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
 frame_conexion = tk.Frame(root, bg='#051333')
 frame_conexion.grid(row=1, column=0, padx=10, pady=5, sticky="nw")
 
+# Texto para mostrar el estado de la conexión
+texto_estado = tk.Text(frame_conexion, height=1, width=20, font=text_font)
+texto_estado.grid(row=1, column=0, padx=5, pady=5)
+texto_estado.insert(1.0, "Desconectado")
+texto_estado.configure(state="disabled", bg="red")
+
 combo_com = ttk.Combobox(frame_conexion, values=["COM1", "COM2", "COM3", "COM4"])
-combo_com.grid(row=0, column=0, padx=5, pady=5)
-combo_com.set("COM3")
+combo_com.grid(row=2, column=0, padx=5, pady=5)
+combo_com.set("COM1")
 
-btn_establecer = tk.Button(frame_conexion, text="Conectar", font=button_font)
-btn_establecer.grid(row=1, column=0, padx=5, pady=5)
+btn_establecer = tk.Button(frame_conexion, text="Conectar", font=button_font, command=click_conectar)
+btn_establecer.grid(row=3, column=0, padx=5, pady=5)
 
-btn_cerrar = tk.Button(frame_conexion, text="Desconectar", font=button_font)
-btn_cerrar.grid(row=2, column=0, padx=5, pady=5)
+btn_cerrar = tk.Button(frame_conexion, text="Desconectar", font=button_font, command=click_desconectar)
+btn_cerrar.grid(row=4, column=0, padx=5, pady=5)
 
 # Sección 2: Cinemática Directa
 label_cinematica_directa = tk.Label(root, text="Seccion 2", bg='#051333', fg='white', font=text_font)
@@ -36,8 +78,6 @@ label_cinematica_directa.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
 
 frame_cinematica_directa = tk.Frame(root, bg='#051333')
 frame_cinematica_directa.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
-
-
 
 # Sección 3: Entradas Numéricas
 label_entradas = tk.Label(root, text="Entradas Numéricas", bg='#051333', fg='white', font=text_font)
