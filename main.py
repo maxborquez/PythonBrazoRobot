@@ -26,7 +26,7 @@ def click_conectar():
             SerialPort1.stopbits = serial.STOPBITS_ONE
             SerialPort1.port = combo_com.get()
             SerialPort1.open()
-            label_estado.config(text="Conectado", bg="LIME")
+            label_estado.config(text="Conectado", bg="#1cb360")
             messagebox.showinfo(message="Puerto Conectado")
         except Exception as e:
             messagebox.showerror(message=f"Error al conectar: {e}")
@@ -36,7 +36,7 @@ def click_conectar():
 def click_desconectar():
     if SerialPort1.isOpen():
         SerialPort1.close()
-        label_estado.config(text="Desconectado", bg="red")
+        label_estado.config(text="Desconectado", bg="#932727")
         messagebox.showinfo(message="Puerto Desconectado")
     else:
         messagebox.showinfo(message="El puerto ya está desconectado")
@@ -49,7 +49,7 @@ frame_conexion = tk.Frame(root, bg='#051333')
 frame_conexion.grid(row=1, column=0, padx=10, pady=5, sticky="nw")
 
 # Label para mostrar el estado de la conexión
-label_estado = tk.Label(frame_conexion, text="Desconectado", font=text_font, bg="red", fg="white", width=20)
+label_estado = tk.Label(frame_conexion, text="Desconectado", font=text_font, bg="#932727", fg="white", width=20)
 label_estado.grid(row=1, column=0, padx=5, pady=5)
 
 combo_com = ttk.Combobox(frame_conexion, values=["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"])
