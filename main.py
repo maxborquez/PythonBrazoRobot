@@ -14,7 +14,7 @@ text_font = tkfont.Font(family="Arial", size=12, weight="bold")
 
 
 # Sección 1: Conexión
-label_conexion = tk.Label(root, text="Conexión", bg='#051333', fg='white', font=button_font)
+label_conexion = tk.Label(root, text="Conexión", bg='#051333', fg='white', font=text_font)
 label_conexion.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
 
 frame_conexion = tk.Frame(root, bg='#051333')
@@ -31,7 +31,7 @@ btn_cerrar = tk.Button(frame_conexion, text="Desconectar", font=button_font)
 btn_cerrar.grid(row=2, column=0, padx=5, pady=5)
 
 # Sección 2: Cinemática Directa
-label_cinematica_directa = tk.Label(root, text="Seccion 2", bg='#051333', fg='white', font=button_font)
+label_cinematica_directa = tk.Label(root, text="Seccion 2", bg='#051333', fg='white', font=text_font)
 label_cinematica_directa.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
 
 frame_cinematica_directa = tk.Frame(root, bg='#051333')
@@ -40,7 +40,7 @@ frame_cinematica_directa.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
 
 
 # Sección 3: Entradas Numéricas
-label_entradas = tk.Label(root, text="Entradas Numéricas", bg='#051333', fg='white', font=button_font)
+label_entradas = tk.Label(root, text="Entradas Numéricas", bg='#051333', fg='white', font=text_font)
 label_entradas.grid(row=0, column=2, padx=10, pady=5, sticky="nw")
 
 frame_entradas = tk.Frame(root, bg='#051333')
@@ -71,11 +71,11 @@ spinbox6 = tk.Spinbox(frame_entradas, from_=0, to=180)
 spinbox6.grid(row=5, column=1, padx=5, pady=5)
 
 # Sección 4: Cinemática Inversa
-label_cinematica_inversa = tk.Label(root, text="Seccion 5", bg='#051333', fg='white', font=button_font)
+label_cinematica_inversa = tk.Label(root, text="Seccion 5", bg='#051333', fg='white', font=text_font)
 label_cinematica_inversa.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
 
 # Sección 5: Panel
-label_panel = tk.Label(root, text="Panel", bg='#051333', fg='white', font=button_font)
+label_panel = tk.Label(root, text="Panel", bg='#051333', fg='white', font=text_font)
 label_panel.grid(row=2, column=0, padx=10, pady=5, sticky="nw")
 
 frame_panel = tk.Frame(root, bg='#051333')
@@ -93,7 +93,7 @@ btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=button_font).grid(ro
 btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=button_font).grid(row=3, column=0, padx=5, pady=5)
 
 # Sección de gráficos (Incluir imagen)
-label_graficos = tk.Label(root, text="", bg='#051333', fg='white', font=button_font)
+label_graficos = tk.Label(root, text="", bg='#051333', fg='white', font=text_font)
 label_graficos.grid(row=2, column=2, padx=10, pady=5, sticky="nw")
 
 frame_graficos = tk.Frame(root, bg='#051333')
