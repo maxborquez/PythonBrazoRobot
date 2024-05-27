@@ -62,25 +62,14 @@ class ControlBrazoRobot:
         frame_servos = tk.Frame(self.ventana, bg=self.azul)
         frame_servos.grid(row=1, column=2, padx=10, pady=5, sticky="nw")
 
-        tk.Label(frame_servos, text="Posicion servo 1", bg=self.azul, fg='white', font=self.text_font).grid(row=0, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=0, column=1, padx=5, pady=5)
+        self.spinbox_servos = []
+        for i in range(6):
+            tk.Label(frame_servos, text=f"Posicion servo {i+1}", bg=self.azul, fg='white', font=self.text_font).grid(row=i, column=0, padx=5, pady=5)
+            spinbox = tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15)
+            spinbox.grid(row=i, column=1, padx=5, pady=5)
+            self.spinbox_servos.append(spinbox)
 
-        tk.Label(frame_servos, text="Posicion servo 2", bg=self.azul, fg='white', font=self.text_font).grid(row=1, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=1, column=1, padx=5, pady=5)
-
-        tk.Label(frame_servos, text="Posicion servo 3", bg=self.azul, fg='white', font=self.text_font).grid(row=2, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=2, column=1, padx=5, pady=5)
-
-        tk.Label(frame_servos, text="Posicion servo 4", bg=self.azul, fg='white', font=self.text_font).grid(row=3, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=3, column=1, padx=5, pady=5)
-
-        tk.Label(frame_servos, text="Posicion servo 5", bg=self.azul, fg='white', font=self.text_font).grid(row=4, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=4, column=1, padx=5, pady=5)
-
-        tk.Label(frame_servos, text="Posicion servo 6", bg=self.azul, fg='white', font=self.text_font).grid(row=5, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=5, column=1, padx=5, pady=5)
-
-        btn_mover = tk.Button(frame_servos, text="  Mover  ", font=self.button_font)
+        btn_mover = tk.Button(frame_servos, text="  Mover  ", font=self.button_font, command=self.enviar_posiciones)
         btn_mover.grid(row=6, column=1, padx=5, pady=5)
 
     def seccion_panel(self):
@@ -90,7 +79,6 @@ class ControlBrazoRobot:
         frame_panel = tk.Frame(self.ventana, bg=self.azul)
         frame_panel.grid(row=3, column=0, padx=10, pady=5, sticky="nw")
 
-        # Definición individual de botones de registros
         btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font)
         btn_registro1.grid(row=1, column=0, padx=5, pady=5)
 
@@ -172,6 +160,15 @@ class ControlBrazoRobot:
             messagebox.showinfo(message="Puerto Desconectado")
         else:
             messagebox.showinfo(message="El puerto ya está desconectado")
+
+    def enviar_posiciones(self):
+        if self.SerialPort1.isOpen():
+            posiciones = [spinbox.get() for spinbox in self.spinbox_servos]
+            cadena = ",".join(posiciones)
+            self.SerialPort1.write(cadena.encode())
+            messagebox.showinfo(message=f"Posiciones enviadas: {cadena}")
+        else:
+            messagebox.showwarning(message="El puerto no está conectado")
 
 
 def main():
