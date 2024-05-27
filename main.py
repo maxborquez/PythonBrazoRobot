@@ -85,6 +85,9 @@ class ControlBrazoRobot:
             spinbox.grid(row=i, column=1, padx=5, pady=5)
             self.spinbox_servos.append(spinbox)
 
+        btn_reset = tk.Button(frame_servos, text="  Reset  ", font=self.button_font, command=self.resetear_posiciones)
+        btn_reset.grid(row=6, column=0, padx=5, pady=5)
+
         btn_mover = tk.Button(frame_servos, text="  Mover  ", font=self.button_font, command=self.enviar_posiciones)
         btn_mover.grid(row=6, column=1, padx=5, pady=5)
 
@@ -234,6 +237,11 @@ class ControlBrazoRobot:
             for registro_id, filas in self.registros.items():
                 writer.writerow([registro_id])
                 writer.writerows(filas)
+
+    def resetear_posiciones(self):
+        for spinbox in self.spinbox_servos:
+            spinbox.delete(0, "end")
+            spinbox.insert(0, "0")
 
 def main():
     ventana = tk.Tk()
