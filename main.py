@@ -28,7 +28,7 @@ class ControlBrazoRobot:
         self.seccion_2()
         self.seccion_servos()
         self.seccion_panel()
-        self.seccion_5()
+        self.tabla_registros()
         self.seccion_6()
 
     def leer_registros_csv(self, filename):
@@ -125,17 +125,17 @@ class ControlBrazoRobot:
         btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
 
-    def seccion_5(self):
-        label_seccion_5 = tk.Label(self.ventana, text="Sección 5", bg=self.azul, fg='white', font=self.text_font)
-        label_seccion_5.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
+    def tabla_registros(self):
+        label_tabla_registros = tk.Label(self.ventana, text="Registros", bg=self.azul, fg='white', font=self.text_font)
+        label_tabla_registros.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
 
-        self.frame_seccion_5 = tk.Frame(self.ventana, bg=self.azul)
-        self.frame_seccion_5.grid(row=3, column=1, padx=10, pady=5, sticky="nw")
+        self.frame_tabla_registros = tk.Frame(self.ventana, bg=self.azul)
+        self.frame_tabla_registros.grid(row=3, column=1, padx=10, pady=5, sticky="nw")
 
-        for widget in self.frame_seccion_5.winfo_children():
+        for widget in self.frame_tabla_registros.winfo_children():
             widget.destroy()
 
-        self.tree = ttk.Treeview(self.frame_seccion_5, columns=[f"#{i}" for i in range(1, 7)], show='headings')
+        self.tree = ttk.Treeview(self.frame_tabla_registros, columns=[f"#{i}" for i in range(1, 7)], show='headings')
 
         for i in range(1, 7):
             self.tree.heading(f"#{i}", text=f"Col {i}")
@@ -199,10 +199,10 @@ class ControlBrazoRobot:
 
     def mostrar_registro(self, registro):
         self.registro_seleccionado = registro  # Almacena el registro seleccionado
-        for widget in self.frame_seccion_5.winfo_children():
+        for widget in self.frame_tabla_registros.winfo_children():
             widget.destroy()
 
-        self.tree = ttk.Treeview(self.frame_seccion_5, columns=[f"#{i}" for i in range(1, 7)], show='headings')
+        self.tree = ttk.Treeview(self.frame_tabla_registros, columns=[f"#{i}" for i in range(1, 7)], show='headings')
 
         for i in range(1, 7):
             self.tree.heading(f"#{i}", text=f"Servo {i}")
@@ -212,12 +212,12 @@ class ControlBrazoRobot:
 
         if registro in self.registros:
             if len(self.registros[registro]) == 0:
-                tk.Label(self.frame_seccion_5, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
+                tk.Label(self.frame_tabla_registros, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
             else:
                 for row in self.registros[registro]:
                     self.tree.insert("", "end", values=row)
         else:
-            tk.Label(self.frame_seccion_5, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
+            tk.Label(self.frame_tabla_registros, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
 
     def limpiar_registro(self):
         if self.registro_seleccionado and self.registro_seleccionado in self.registros:
