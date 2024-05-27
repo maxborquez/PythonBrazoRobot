@@ -62,23 +62,26 @@ class ControlBrazoRobot:
         frame_servos = tk.Frame(self.ventana, bg=self.azul)
         frame_servos.grid(row=1, column=2, padx=10, pady=5, sticky="nw")
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 1", bg=self.azul, fg='white', font=self.text_font).grid(row=0, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=0, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 1", bg=self.azul, fg='white', font=self.text_font).grid(row=0, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=0, column=1, padx=5, pady=5)
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 2", bg=self.azul, fg='white', font=self.text_font).grid(row=1, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=1, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 2", bg=self.azul, fg='white', font=self.text_font).grid(row=1, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=1, column=1, padx=5, pady=5)
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 3", bg=self.azul, fg='white', font=self.text_font).grid(row=2, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=2, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 3", bg=self.azul, fg='white', font=self.text_font).grid(row=2, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=2, column=1, padx=5, pady=5)
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 4", bg=self.azul, fg='white', font=self.text_font).grid(row=3, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=3, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 4", bg=self.azul, fg='white', font=self.text_font).grid(row=3, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=3, column=1, padx=5, pady=5)
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 5", bg=self.azul, fg='white', font=self.text_font).grid(row=4, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=4, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 5", bg=self.azul, fg='white', font=self.text_font).grid(row=4, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=4, column=1, padx=5, pady=5)
 
-        tk.Label(frame_servos, text="Ángulos Servomotor 6", bg=self.azul, fg='white', font=self.text_font).grid(row=5, column=0, padx=5, pady=5)
-        tk.Spinbox(frame_servos, from_=0, to=180).grid(row=5, column=1, padx=5, pady=5)
+        tk.Label(frame_servos, text="Posicion servo 6", bg=self.azul, fg='white', font=self.text_font).grid(row=5, column=0, padx=5, pady=5)
+        tk.Spinbox(frame_servos, from_=0, to=180, width=5, font=15).grid(row=5, column=1, padx=5, pady=5)
+
+        btn_mover = tk.Button(frame_servos, text="  Mover  ", font=self.button_font)
+        btn_mover.grid(row=6, column=1, padx=5, pady=5)
 
     def seccion_panel(self):
         label_panel = tk.Label(self.ventana, text="Panel", bg=self.azul, fg='white', font=self.text_font)
@@ -111,6 +114,12 @@ class ControlBrazoRobot:
 
         btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
+
+        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font)
+        btn_agregar.grid(row=4, column=1, padx=5, pady=5)
+
+        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font)
+        btn_quitar.grid(row=5, column=1, padx=5, pady=5)
 
     def seccion_5(self):
         label_seccion_5 = tk.Label(self.ventana, text="Seccion 5", bg=self.azul, fg='white', font=self.text_font)
