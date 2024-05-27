@@ -20,6 +20,7 @@ class ControlBrazoRobot:
 
         self.SerialPort1 = serial.Serial()
         self.registros = self.leer_registros_csv("registros.csv")
+        self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
         self.create_widgets()
 
     def create_widgets(self):
@@ -115,7 +116,7 @@ class ControlBrazoRobot:
         btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font)
         btn_ejecutar.grid(row=2, column=1, padx=5, pady=5)
 
-        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font)
+        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
 
         btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font)
@@ -197,6 +198,7 @@ class ControlBrazoRobot:
             messagebox.showwarning(message="El puerto no está conectado")
 
     def mostrar_registro(self, registro):
+        self.registro_seleccionado = registro  # Almacena el registro seleccionado
         for widget in self.frame_seccion_5.winfo_children():
             widget.destroy()
 
@@ -214,6 +216,24 @@ class ControlBrazoRobot:
             else:
                 for row in self.registros[registro]:
                     self.tree.insert("", "end", values=row)
+        else:
+            tk.Label(self.frame_seccion_5, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
+
+    def limpiar_registro(self):
+        if self.registro_seleccionado and self.registro_seleccionado in self.registros:
+            self.registros[self.registro_seleccionado] = []
+            self.actualizar_csv()
+            self.mostrar_registro(self.registro_seleccionado)
+            messagebox.showinfo(message=f"Registro {self.registro_seleccionado} limpiado.")
+        else:
+            messagebox.showwarning(message="No hay un registro seleccionado o el registro no es válido.")
+
+    def actualizar_csv(self):
+        with open("registros.csv", "w", newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for registro_id, filas in self.registros.items():
+                writer.writerow([registro_id])
+                writer.writerows(filas)
 
 def main():
     ventana = tk.Tk()
