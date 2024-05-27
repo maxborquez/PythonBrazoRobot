@@ -122,10 +122,10 @@ class ControlBrazoRobot:
         btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
 
-        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font)
+        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font, command=self.agregar_fila)
         btn_agregar.grid(row=4, column=1, padx=5, pady=5)
 
-        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font)
+        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font, command=self.quitar_fila)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
 
     def tabla_registros(self):
@@ -242,6 +242,25 @@ class ControlBrazoRobot:
         for spinbox in self.spinbox_servos:
             spinbox.delete(0, "end")
             spinbox.insert(0, "0")
+
+    def agregar_fila(self):
+        if self.registro_seleccionado and self.registro_seleccionado in self.registros:
+            nueva_fila = [spinbox.get() for spinbox in self.spinbox_servos]
+            self.registros[self.registro_seleccionado].append(nueva_fila)
+            self.actualizar_csv()
+            self.mostrar_registro(self.registro_seleccionado)
+            messagebox.showinfo(message=f"Fila agregada al registro {self.registro_seleccionado}.")
+        else:
+            messagebox.showwarning(message="No hay un registro seleccionado o el registro no es válido.")
+
+    def quitar_fila(self):
+        if self.registro_seleccionado and self.registro_seleccionado in self.registros and len(self.registros[self.registro_seleccionado]) > 0:
+            self.registros[self.registro_seleccionado].pop()
+            self.actualizar_csv()
+            self.mostrar_registro(self.registro_seleccionado)
+            messagebox.showinfo(message=f"Última fila quitada del registro {self.registro_seleccionado}.")
+        else:
+            messagebox.showwarning(message="No hay un registro seleccionado, el registro no es válido, o no hay filas para quitar.")
 
 def main():
     ventana = tk.Tk()
