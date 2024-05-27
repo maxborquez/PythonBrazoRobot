@@ -246,6 +246,11 @@ class ControlBrazoRobot:
     def agregar_fila(self):
         if self.registro_seleccionado and self.registro_seleccionado in self.registros:
             nueva_fila = [spinbox.get() for spinbox in self.spinbox_servos]
+            # Validación de los valores
+            for valor in nueva_fila:
+                if not valor.isdigit() or not (0 <= int(valor) <= 180):
+                    messagebox.showerror(message="Todos los valores deben ser enteros entre 0 y 180.")
+                    return
             self.registros[self.registro_seleccionado].append(nueva_fila)
             self.actualizar_csv()
             self.mostrar_registro(self.registro_seleccionado)
