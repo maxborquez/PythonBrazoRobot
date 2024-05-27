@@ -13,7 +13,7 @@ class ControlBrazoRobot:
         self.ventana = ventana
         self.ventana.title("Control brazo robotico")
         self.ventana.configure(bg=self.azul)
-        self.ventana.geometry("800x600")
+        self.ventana.geometry("1150x600")
 
         self.button_font = tkfont.Font(family="Arial", size=10, weight="bold")
         self.text_font = tkfont.Font(family="Arial", size=12, weight="bold")
