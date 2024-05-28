@@ -13,7 +13,7 @@ class ControlBrazoRobot:
         self.ventana = ventana
         self.ventana.title("Control brazo robotico")
         self.ventana.configure(bg=self.azul)
-        self.ventana.geometry("1150x600")
+        self.ventana.geometry("1150x680")
 
         self.button_font = tkfont.Font(family="Arial", size=10, weight="bold")
         self.text_font = tkfont.Font(family="Arial", size=12, weight="bold")
@@ -163,6 +163,9 @@ class ControlBrazoRobot:
             label_image.pack(padx=50, pady=5)
         except Exception as e:
             print(f"Error loading image: {e}")
+
+        label_dev = tk.Label(frame_seccion_6, text="Maximiliano Bórquez \n IECI", bg=self.azul, fg='white', font=self.text_font)
+        label_dev.pack(padx=5, pady=5)
 
         btn_salir = tk.Button(frame_seccion_6, text="Salir", command=self.ventana.quit, font=self.button_font)
         btn_salir.pack(padx=5, pady=5)
