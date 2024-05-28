@@ -113,7 +113,7 @@ class ControlBrazoRobot:
         btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.mostrar_registro('r5'))
         btn_registro5.grid(row=5, column=0, padx=5, pady=5)
 
-        btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font)
+        btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font, command=self.enviar_home)
         btn_home.grid(row=1, column=1, padx=5, pady=5)
 
         btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font)
@@ -127,6 +127,14 @@ class ControlBrazoRobot:
 
         btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font, command=self.quitar_fila)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
+
+    def enviar_home(self):
+        if self.SerialPort1.isOpen():
+            cadena_home = "90,0,0,0,90,90"
+            self.SerialPort1.write(cadena_home.encode())
+            messagebox.showinfo(message=f"Posiciones home enviadas: {cadena_home}")
+        else:
+            messagebox.showwarning(message="El puerto no está conectado")
 
     def tabla_registros(self):
         label_tabla_registros = tk.Label(self.ventana, text="Registros", bg=self.azul, fg='white', font=self.text_font)
@@ -145,6 +153,8 @@ class ControlBrazoRobot:
             self.tree.column(f"#{i}", width=100)
 
         self.tree.pack(expand=True, fill='both')
+
+        tk.Label(self.frame_tabla_registros, text="Tabla de registros", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
 
     def seccion_6(self):
         label_seccion_6 = tk.Label(self.ventana, text="Sección 6", bg=self.azul, fg='white', font=self.text_font)
