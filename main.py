@@ -172,9 +172,27 @@ class ControlBrazoRobot:
 
     def enviar_posiciones(self):
         if self.SerialPort1.isOpen():
-            posiciones = ",".join(spinbox.get() for spinbox in self.spinbox_servos)
-            self.SerialPort1.write(posiciones.encode())
-            messagebox.showinfo(message=f"Posiciones enviadas: {posiciones}")
+            posiciones_validas = True
+            posiciones = []
+
+            for spinbox in self.spinbox_servos:
+                try:
+                    valor = int(spinbox.get())
+                    if 0 <= valor <= 180:
+                        posiciones.append(str(valor))
+                    else:
+                        posiciones_validas = False
+                        break
+                except ValueError:
+                    posiciones_validas = False
+                    break
+
+            if posiciones_validas:
+                posiciones_str = ",".join(posiciones)
+                self.SerialPort1.write(posiciones_str.encode())
+                messagebox.showinfo(message=f"Posiciones enviadas: {posiciones_str}")
+            else:
+                messagebox.showerror(message="Todos los valores deben ser enteros entre 0 y 180.")
         else:
             messagebox.showwarning(message="El puerto no está conectado")
 
