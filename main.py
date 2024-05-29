@@ -19,7 +19,6 @@ class ControlBrazoRobot:
         self.text_font = tkfont.Font(family="Arial", size=12, weight="bold")
 
         self.SerialPort1 = serial.Serial()
-        self.registros = self.leer_registros_csv("registros.csv")
         self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
         self.create_widgets()
 
@@ -30,19 +29,6 @@ class ControlBrazoRobot:
         self.seccion_panel()
         self.tabla_registros()
         self.seccion_6()
-
-    def leer_registros_csv(self, filename):
-        registros = {}
-        with open(filename, newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            current_r = None
-            for row in reader:
-                if len(row) > 0 and row[0].startswith('r'):
-                    current_r = row[0]
-                    registros[current_r] = []
-                elif current_r:
-                    registros[current_r].append(row)
-        return registros
 
     def seccion_conexion(self):
         label_conexion = tk.Label(self.ventana, text="Conexión", bg=self.azul, fg='white', font=self.text_font)
@@ -98,19 +84,19 @@ class ControlBrazoRobot:
         frame_panel = tk.Frame(self.ventana, bg=self.azul)
         frame_panel.grid(row=3, column=0, padx=10, pady=5, sticky="nw")
 
-        btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font, command=lambda: self.mostrar_registro('r1'))
+        btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font, command=lambda: self.mostrar_registros("r1"))
         btn_registro1.grid(row=1, column=0, padx=5, pady=5)
 
-        btn_registro2 = tk.Button(frame_panel, text="Registro 2", font=self.button_font, command=lambda: self.mostrar_registro('r2'))
+        btn_registro2 = tk.Button(frame_panel, text="Registro 2", font=self.button_font, command=lambda: self.mostrar_registros("r2"))
         btn_registro2.grid(row=2, column=0, padx=5, pady=5)
 
-        btn_registro3 = tk.Button(frame_panel, text="Registro 3", font=self.button_font, command=lambda: self.mostrar_registro('r3'))
+        btn_registro3 = tk.Button(frame_panel, text="Registro 3", font=self.button_font, command=lambda: self.mostrar_registros("r3"))
         btn_registro3.grid(row=3, column=0, padx=5, pady=5)
 
-        btn_registro4 = tk.Button(frame_panel, text="Registro 4", font=self.button_font, command=lambda: self.mostrar_registro('r4'))
+        btn_registro4 = tk.Button(frame_panel, text="Registro 4", font=self.button_font, command=lambda: self.mostrar_registros("r4"))
         btn_registro4.grid(row=4, column=0, padx=5, pady=5)
 
-        btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.mostrar_registro('r5'))
+        btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.mostrar_registros("r5"))
         btn_registro5.grid(row=5, column=0, padx=5, pady=5)
 
         btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font, command=self.enviar_home)
@@ -119,13 +105,13 @@ class ControlBrazoRobot:
         btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font)
         btn_ejecutar.grid(row=2, column=1, padx=5, pady=5)
 
-        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
+        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
 
-        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font, command=self.agregar_fila)
+        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font)
         btn_agregar.grid(row=4, column=1, padx=5, pady=5)
 
-        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font, command=self.quitar_fila)
+        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
 
     def enviar_home(self):
@@ -143,13 +129,10 @@ class ControlBrazoRobot:
         self.frame_tabla_registros = tk.Frame(self.ventana, bg=self.azul)
         self.frame_tabla_registros.grid(row=3, column=1, padx=10, pady=5, sticky="nw")
 
-        for widget in self.frame_tabla_registros.winfo_children():
-            widget.destroy()
-
         self.tree = ttk.Treeview(self.frame_tabla_registros, columns=[f"#{i}" for i in range(1, 7)], show='headings')
 
         for i in range(1, 7):
-            self.tree.heading(f"#{i}", text=f"Col {i}")
+            self.tree.heading(f"#{i}", text=f"Servo {i}")
             self.tree.column(f"#{i}", width=100)
 
         self.tree.pack(expand=True, fill='both')
@@ -163,122 +146,65 @@ class ControlBrazoRobot:
         frame_seccion_6 = tk.Frame(self.ventana, bg=self.azul)
         frame_seccion_6.grid(row=3, column=2, padx=10, pady=5, sticky="nw")
 
-        try:
-            image = Image.open("LogoUBB.png")
-            image = image.resize((230, 200), Image.LANCZOS)
-            photo = ImageTk.PhotoImage(image)
+        image = Image.open("./LogoUBB.png")
+        image = image.resize((100, 100), Image.LANCZOS)
+        self.photo = ImageTk.PhotoImage(image)
 
-            label_image = tk.Label(frame_seccion_6, image=photo)
-            label_image.image = photo
-            label_image.pack(padx=50, pady=5)
-        except Exception as e:
-            print(f"Error loading image: {e}")
+        label_image = tk.Label(frame_seccion_6, image=self.photo)
+        label_image.pack(padx=5, pady=5)
 
-        label_dev = tk.Label(frame_seccion_6, text="Maximiliano Bórquez \n IECI", bg=self.azul, fg='white', font=self.text_font)
-        label_dev.pack(padx=5, pady=5)
+        btn_guardar = tk.Button(frame_seccion_6, text=" Guardar ", font=self.button_font)
+        btn_guardar.pack(padx=5, pady=5)
 
-        btn_salir = tk.Button(frame_seccion_6, text="Salir", command=self.ventana.quit, font=self.button_font)
+        btn_salir = tk.Button(frame_seccion_6, text=" Salir ", font=self.button_font, command=self.ventana.quit)
         btn_salir.pack(padx=5, pady=5)
 
     def click_conectar(self):
-        if not self.SerialPort1.isOpen():
-            try:
-                self.SerialPort1.baudrate = 9600
-                self.SerialPort1.bytesize = 8
-                self.SerialPort1.parity = "N"
-                self.SerialPort1.stopbits = serial.STOPBITS_ONE
-                self.SerialPort1.port = self.combo_com.get()
-                self.SerialPort1.open()
-                self.label_estado.config(text="Conectado", bg=self.verde)
-                messagebox.showinfo(message="Puerto Conectado")
-            except Exception as e:
-                messagebox.showerror(message=f"Error al conectar: {e}")
-        else:
-            messagebox.showinfo(message="El puerto ya está conectado")
+        try:
+            self.SerialPort1.port = self.combo_com.get()
+            self.SerialPort1.baudrate = 9600
+            self.SerialPort1.open()
+            self.label_estado.configure(text="Conectado", bg=self.verde)
+        except:
+            messagebox.showerror("Error", "No se pudo conectar al puerto")
 
     def click_desconectar(self):
         if self.SerialPort1.isOpen():
             self.SerialPort1.close()
-            self.label_estado.config(text="Desconectado", bg=self.rojo)
-            messagebox.showinfo(message="Puerto Desconectado")
-        else:
-            messagebox.showinfo(message="El puerto ya está desconectado")
+            self.label_estado.configure(text="Desconectado", bg=self.rojo)
 
     def enviar_posiciones(self):
         if self.SerialPort1.isOpen():
-            posiciones = [spinbox.get() for spinbox in self.spinbox_servos]
-            cadena = ",".join(posiciones)
-            self.SerialPort1.write(cadena.encode())
-            messagebox.showinfo(message=f"Posiciones enviadas: {cadena}")
+            posiciones = ",".join(spinbox.get() for spinbox in self.spinbox_servos)
+            self.SerialPort1.write(posiciones.encode())
+            messagebox.showinfo(message=f"Posiciones enviadas: {posiciones}")
         else:
             messagebox.showwarning(message="El puerto no está conectado")
 
-    def mostrar_registro(self, registro):
-        self.registro_seleccionado = registro  # Almacena el registro seleccionado
-        for widget in self.frame_tabla_registros.winfo_children():
-            widget.destroy()
-
-        self.tree = ttk.Treeview(self.frame_tabla_registros, columns=[f"#{i}" for i in range(1, 7)], show='headings')
-
-        for i in range(1, 7):
-            self.tree.heading(f"#{i}", text=f"Servo {i}")
-            self.tree.column(f"#{i}", width=100)
-
-        self.tree.pack(expand=True, fill='both')
-
-        if registro in self.registros:
-            if len(self.registros[registro]) == 0:
-                tk.Label(self.frame_tabla_registros, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
-            else:
-                for row in self.registros[registro]:
-                    self.tree.insert("", "end", values=row)
-        else:
-            tk.Label(self.frame_tabla_registros, text="No hay datos", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
-
-    def limpiar_registro(self):
-        if self.registro_seleccionado and self.registro_seleccionado in self.registros:
-            self.registros[self.registro_seleccionado] = []
-            self.actualizar_csv()
-            self.mostrar_registro(self.registro_seleccionado)
-            messagebox.showinfo(message=f"Registro {self.registro_seleccionado} limpiado.")
-        else:
-            messagebox.showwarning(message="No hay un registro seleccionado o el registro no es válido.")
-
-    def actualizar_csv(self):
-        with open("registros.csv", "w", newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            for registro_id, filas in self.registros.items():
-                writer.writerow([registro_id])
-                writer.writerows(filas)
-
     def resetear_posiciones(self):
         for spinbox in self.spinbox_servos:
-            spinbox.delete(0, "end")
-            spinbox.insert(0, "0")
+            spinbox.delete(0, 'end')
+            spinbox.insert(0, 0)
 
-    def agregar_fila(self):
-        if self.registro_seleccionado and self.registro_seleccionado in self.registros:
-            nueva_fila = [spinbox.get() for spinbox in self.spinbox_servos]
-            # Validación de los valores
-            for valor in nueva_fila:
-                if not valor.isdigit() or not (0 <= int(valor) <= 180):
-                    messagebox.showerror(message="Todos los valores deben ser enteros entre 0 y 180.")
-                    return
-            self.registros[self.registro_seleccionado].append(nueva_fila)
-            self.actualizar_csv()
-            self.mostrar_registro(self.registro_seleccionado)
-            messagebox.showinfo(message=f"Fila agregada al registro {self.registro_seleccionado}.")
-        else:
-            messagebox.showwarning(message="No hay un registro seleccionado o el registro no es válido.")
+    def cargar_registros(self):
+        registros = {}
+        with open('registros.csv', 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                key = row[0]
+                if key not in registros:
+                    registros[key] = []
+                registros[key].append(row[1:])
+        return registros
 
-    def quitar_fila(self):
-        if self.registro_seleccionado and self.registro_seleccionado in self.registros and len(self.registros[self.registro_seleccionado]) > 0:
-            self.registros[self.registro_seleccionado].pop()
-            self.actualizar_csv()
-            self.mostrar_registro(self.registro_seleccionado)
-            messagebox.showinfo(message=f"Última fila quitada del registro {self.registro_seleccionado}.")
+    def mostrar_registros(self, registro_id):
+        registros = self.cargar_registros()
+        if registro_id in registros:
+            self.tree.delete(*self.tree.get_children())
+            for fila in registros[registro_id]:
+                self.tree.insert("", "end", values=fila)
         else:
-            messagebox.showwarning(message="No hay un registro seleccionado, el registro no es válido, o no hay filas para quitar.")
+            messagebox.showwarning("Advertencia", f"No se encontraron registros para {registro_id}")
 
 def main():
     ventana = tk.Tk()
