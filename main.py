@@ -102,7 +102,7 @@ class ControlBrazoRobot:
         btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font, command=self.enviar_home)
         btn_home.grid(row=1, column=1, padx=5, pady=5)
 
-        btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font)
+        btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font, command=self.click_ejecutar)
         btn_ejecutar.grid(row=2, column=1, padx=5, pady=5)
 
         btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
@@ -152,6 +152,9 @@ class ControlBrazoRobot:
 
         label_image = tk.Label(frame_seccion_6, image=self.photo)
         label_image.pack(padx=5, pady=5)
+
+        label_dev = tk.Label(frame_seccion_6, text="Desarrollado por \n Maximiliano Bórquez \n IECI", bg=self.azul, fg='white', font=self.text_font)
+        label_dev.pack(padx=5, pady=5)
 
         btn_salir = tk.Button(frame_seccion_6, text=" Salir ", font=self.button_font, command=self.ventana.quit)
         btn_salir.pack(padx=5, pady=5)
@@ -278,6 +281,31 @@ class ControlBrazoRobot:
                 messagebox.showwarning("Advertencia", "Registro seleccionado vacío")
         else:
             messagebox.showwarning("Advertencia", "Seleccione un registro primero")
+
+    def click_ejecutar(self):
+        registros = self.tree.get_children()
+        if not registros:
+            messagebox.showwarning(message="No hay registros para ejecutar")
+            return
+
+        self.ejecutar_registro(0, registros)
+
+    def ejecutar_registro(self, indice, registros):
+        if indice >= len(registros):
+            messagebox.showinfo(message="Todos los registros han sido ejecutados")
+            return
+
+        fila = self.tree.item(registros[indice])["values"]
+        cadena = ",".join(map(str, fila))
+        if self.SerialPort1.isOpen():
+            self.SerialPort1.write(cadena.encode())
+            messagebox.showinfo(message=f"Registro {indice + 1} enviado: {cadena}")
+        else:
+            messagebox.showwarning(message="El puerto no está conectado")
+            return
+
+        # Llama a esta función nuevamente después de 20000 ms (20 segundos)
+        self.ventana.after(10000, self.ejecutar_registro, indice + 1, registros)
 
 def main():
     ventana = tk.Tk()
