@@ -84,19 +84,19 @@ class ControlBrazoRobot:
         frame_panel = tk.Frame(self.ventana, bg=self.azul)
         frame_panel.grid(row=3, column=0, padx=10, pady=5, sticky="nw")
 
-        btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font, command=lambda: self.mostrar_registros("r1"))
+        btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font, command=lambda: self.seleccionar_registro("r1"))
         btn_registro1.grid(row=1, column=0, padx=5, pady=5)
 
-        btn_registro2 = tk.Button(frame_panel, text="Registro 2", font=self.button_font, command=lambda: self.mostrar_registros("r2"))
+        btn_registro2 = tk.Button(frame_panel, text="Registro 2", font=self.button_font, command=lambda: self.seleccionar_registro("r2"))
         btn_registro2.grid(row=2, column=0, padx=5, pady=5)
 
-        btn_registro3 = tk.Button(frame_panel, text="Registro 3", font=self.button_font, command=lambda: self.mostrar_registros("r3"))
+        btn_registro3 = tk.Button(frame_panel, text="Registro 3", font=self.button_font, command=lambda: self.seleccionar_registro("r3"))
         btn_registro3.grid(row=3, column=0, padx=5, pady=5)
 
-        btn_registro4 = tk.Button(frame_panel, text="Registro 4", font=self.button_font, command=lambda: self.mostrar_registros("r4"))
+        btn_registro4 = tk.Button(frame_panel, text="Registro 4", font=self.button_font, command=lambda: self.seleccionar_registro("r4"))
         btn_registro4.grid(row=4, column=0, padx=5, pady=5)
 
-        btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.mostrar_registros("r5"))
+        btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.seleccionar_registro("r5"))
         btn_registro5.grid(row=5, column=0, padx=5, pady=5)
 
         btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font, command=self.enviar_home)
@@ -105,13 +105,13 @@ class ControlBrazoRobot:
         btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font)
         btn_ejecutar.grid(row=2, column=1, padx=5, pady=5)
 
-        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font)
+        btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
 
-        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font)
+        btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font, command=self.agregar_fila)
         btn_agregar.grid(row=4, column=1, padx=5, pady=5)
 
-        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font)
+        btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font, command=self.quitar_ultima_fila)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
 
     def enviar_home(self):
@@ -147,14 +147,11 @@ class ControlBrazoRobot:
         frame_seccion_6.grid(row=3, column=2, padx=10, pady=5, sticky="nw")
 
         image = Image.open("./LogoUBB.png")
-        image = image.resize((100, 100), Image.LANCZOS)
+        image = image.resize((230, 200), Image.LANCZOS)
         self.photo = ImageTk.PhotoImage(image)
 
         label_image = tk.Label(frame_seccion_6, image=self.photo)
         label_image.pack(padx=5, pady=5)
-
-        btn_guardar = tk.Button(frame_seccion_6, text=" Guardar ", font=self.button_font)
-        btn_guardar.pack(padx=5, pady=5)
 
         btn_salir = tk.Button(frame_seccion_6, text=" Salir ", font=self.button_font, command=self.ventana.quit)
         btn_salir.pack(padx=5, pady=5)
@@ -199,12 +196,70 @@ class ControlBrazoRobot:
 
     def mostrar_registros(self, registro_id):
         registros = self.cargar_registros()
-        if registro_id in registros:
+        if registro_id in registros and registros[registro_id]:
             self.tree.delete(*self.tree.get_children())
             for fila in registros[registro_id]:
                 self.tree.insert("", "end", values=fila)
         else:
-            messagebox.showwarning("Advertencia", f"No se encontraron registros para {registro_id}")
+            self.tree.delete(*self.tree.get_children())  # Limpiar la tabla si no hay registros
+            messagebox.showinfo("Información", f"Registro seleccionado vacío")
+
+    def seleccionar_registro(self, registro_id):
+        self.registro_seleccionado = registro_id
+        self.mostrar_registros(registro_id)
+
+    def limpiar_registro(self):
+        if self.registro_seleccionado:
+            registros = self.cargar_registros()
+            if self.registro_seleccionado in registros:
+                registros[self.registro_seleccionado] = []  # Limpiar todas las filas del registro seleccionado
+                with open('registros.csv', 'w', newline='') as file:
+                    writer = csv.writer(file)
+                    for key, values in registros.items():
+                        for fila in values:
+                            writer.writerow([key] + fila)
+                self.mostrar_registros(self.registro_seleccionado)
+            else:
+                messagebox.showwarning("Advertencia", "No se encontraron registros para limpiar en el registro seleccionado")
+        else:
+            messagebox.showwarning("Advertencia", "Seleccione un registro primero")
+
+    def agregar_fila(self):
+        if self.registro_seleccionado:
+            valores_spinbox = [spinbox.get() for spinbox in self.spinbox_servos]
+            if all(self.es_entero_valido(valor) for valor in valores_spinbox):
+                nueva_fila = [self.registro_seleccionado] + valores_spinbox
+                with open('registros.csv', 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(nueva_fila)
+                self.mostrar_registros(self.registro_seleccionado)
+            else:
+                messagebox.showwarning("Advertencia", "Los valores de las posiciones deben ser enteros entre 0 y 180")
+        else:
+            messagebox.showwarning("Advertencia", "Seleccione un registro primero")
+
+    def es_entero_valido(self, valor):
+        try:
+            entero = int(valor)
+            return 0 <= entero <= 180
+        except ValueError:
+            return False
+
+    def quitar_ultima_fila(self):
+        if self.registro_seleccionado:
+            registros = self.cargar_registros()
+            if self.registro_seleccionado in registros:
+                registros[self.registro_seleccionado] = registros[self.registro_seleccionado][:-1]
+                with open('registros.csv', 'w', newline='') as file:
+                    writer = csv.writer(file)
+                    for key, values in registros.items():
+                        for fila in values:
+                            writer.writerow([key] + fila)
+                self.mostrar_registros(self.registro_seleccionado)
+            else:
+                messagebox.showwarning("Advertencia", "Registro seleccionado vacío")
+        else:
+            messagebox.showwarning("Advertencia", "Seleccione un registro primero")
 
 def main():
     ventana = tk.Tk()
