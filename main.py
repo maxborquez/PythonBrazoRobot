@@ -137,7 +137,8 @@ class ControlBrazoRobot:
 
         self.tree.pack(expand=True, fill='both')
 
-        tk.Label(self.frame_tabla_registros, text="Tabla de registros", bg=self.azul, fg='white', font=self.text_font).pack(padx=5, pady=5)
+        self.label_cantidad_filas = tk.Label(self.frame_tabla_registros, text="Cantidad de filas: 0", bg=self.azul, fg='white', font=self.text_font)
+        self.label_cantidad_filas.pack(padx=5, pady=5)
 
     def seccion_6(self):
         label_seccion_6 = tk.Label(self.ventana, text="Sección 6", bg=self.azul, fg='white', font=self.text_font)
@@ -221,9 +222,13 @@ class ControlBrazoRobot:
             self.tree.delete(*self.tree.get_children())
             for fila in registros[registro_id]:
                 self.tree.insert("", "end", values=fila)
+            cantidad_filas = len(registros[registro_id])
         else:
             self.tree.delete(*self.tree.get_children())  # Limpiar la tabla si no hay registros
+            cantidad_filas = 0
             messagebox.showinfo("Información", f"Registro seleccionado vacío")
+
+        self.label_cantidad_filas.config(text=f"Cantidad de filas: {cantidad_filas}")
 
     def seleccionar_registro(self, registro_id):
         self.registro_seleccionado = registro_id
@@ -304,7 +309,7 @@ class ControlBrazoRobot:
             messagebox.showwarning(message="El puerto no está conectado")
             return
 
-        # Llama a esta función nuevamente después de 20000 ms (20 segundos)
+        # Llama a esta función nuevamente después de 10000 ms (10 segundos)
         self.ventana.after(10000, self.ejecutar_registro, indice + 1, registros)
 
 def main():
