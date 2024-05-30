@@ -359,12 +359,6 @@ class ControlBrazoRobot:
         self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
 
 
-    def cerrar_ventana_progreso(self):
-        self.ventana_progreso.destroy()
-        # Habilitar todos los botones
-        for button in self.buttons:
-            button.config(state=tk.NORMAL)
-
     def on_progreso_close(self):
         messagebox.showwarning("Advertencia", "No se puede cerrar esta ventana mientras se ejecutan los registros.")
 
