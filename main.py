@@ -122,8 +122,8 @@ class ControlBrazoRobot:
             messagebox.showwarning(message="El puerto no está conectado")
 
     def tabla_registros(self):
-        label_tabla_registros = tk.Label(self.ventana, text="Registros", bg=self.azul, fg='white', font=self.text_font)
-        label_tabla_registros.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
+        self.label_tabla_registros = tk.Label(self.ventana, text="Tabla de registros", bg=self.azul, fg='white', font=self.text_font)
+        self.label_tabla_registros.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
 
         self.frame_tabla_registros = tk.Frame(self.ventana, bg=self.azul)
         self.frame_tabla_registros.grid(row=3, column=1, padx=10, pady=5, sticky="nw")
@@ -229,9 +229,12 @@ class ControlBrazoRobot:
 
         self.label_cantidad_filas.config(text=f"Cantidad de movimientos registrados: {cantidad_filas}")
 
-    def seleccionar_registro(self, registro_id):
-        self.registro_seleccionado = registro_id
-        self.mostrar_registros(registro_id)
+    def seleccionar_registro(self, registro):
+        self.registro_seleccionado = registro
+        numero_registro = registro[1]  # Extraer el número del registro (asume formato "rX")
+        self.label_tabla_registros.config(text=f"Tabla del registro {numero_registro}")
+        self.mostrar_registros(registro)
+
 
     def limpiar_registro(self):
         if self.registro_seleccionado:
