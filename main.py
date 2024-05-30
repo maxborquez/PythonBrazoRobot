@@ -19,6 +19,7 @@ class ControlBrazoRobot:
 
         self.SerialPort1 = serial.Serial()
         self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
+        self.buttons = []  # Lista para almacenar todos los botones
         self.create_widgets()
 
     def create_widgets(self):
@@ -45,9 +46,12 @@ class ControlBrazoRobot:
 
         btn_establecer = tk.Button(frame_conexion, text="Conectar", font=self.button_font, command=self.click_conectar)
         btn_establecer.grid(row=3, column=0, padx=5, pady=5)
+        self.buttons.append(btn_establecer)
 
-        btn_cerrar = tk.Button(frame_conexion, text="Desconectar", font=self.button_font, command=self.click_desconectar)
-        btn_cerrar.grid(row=4, column=0, padx=5, pady=5)
+        btn_desconectar = tk.Button(frame_conexion, text="Desconectar", font=self.button_font, command=self.click_desconectar)
+        btn_desconectar.grid(row=4, column=0, padx=5, pady=5)
+        self.buttons.append(btn_desconectar)
+
 
     def seccion_2(self):
         label_seccion_2 = tk.Label(self.ventana, text="Sección 2", bg=self.azul, fg='white', font=self.text_font)
@@ -72,9 +76,11 @@ class ControlBrazoRobot:
 
         btn_reset = tk.Button(frame_servos, text="  Reset  ", font=self.button_font, command=self.resetear_posiciones)
         btn_reset.grid(row=6, column=0, padx=5, pady=5)
+        self.buttons.append(btn_reset)
 
         btn_mover = tk.Button(frame_servos, text="  Mover  ", font=self.button_font, command=self.enviar_posiciones)
         btn_mover.grid(row=6, column=1, padx=5, pady=5)
+        self.buttons.append(btn_mover)
 
     def seccion_panel(self):
         label_panel = tk.Label(self.ventana, text="Panel", bg=self.azul, fg='white', font=self.text_font)
@@ -85,33 +91,43 @@ class ControlBrazoRobot:
 
         btn_registro1 = tk.Button(frame_panel, text="Registro 1", font=self.button_font, command=lambda: self.seleccionar_registro("r1"))
         btn_registro1.grid(row=1, column=0, padx=5, pady=5)
+        self.buttons.append(btn_registro1)
 
         btn_registro2 = tk.Button(frame_panel, text="Registro 2", font=self.button_font, command=lambda: self.seleccionar_registro("r2"))
         btn_registro2.grid(row=2, column=0, padx=5, pady=5)
+        self.buttons.append(btn_registro2)
 
         btn_registro3 = tk.Button(frame_panel, text="Registro 3", font=self.button_font, command=lambda: self.seleccionar_registro("r3"))
         btn_registro3.grid(row=3, column=0, padx=5, pady=5)
+        self.buttons.append(btn_registro3)
 
         btn_registro4 = tk.Button(frame_panel, text="Registro 4", font=self.button_font, command=lambda: self.seleccionar_registro("r4"))
         btn_registro4.grid(row=4, column=0, padx=5, pady=5)
+        self.buttons.append(btn_registro4)
 
         btn_registro5 = tk.Button(frame_panel, text="Registro 5", font=self.button_font, command=lambda: self.seleccionar_registro("r5"))
         btn_registro5.grid(row=5, column=0, padx=5, pady=5)
+        self.buttons.append(btn_registro5)
 
         btn_home = tk.Button(frame_panel, text="  Home  ", font=self.button_font, command=self.enviar_home)
         btn_home.grid(row=1, column=1, padx=5, pady=5)
+        self.buttons.append(btn_home)
 
         btn_ejecutar = tk.Button(frame_panel, text="Ejecutar", font=self.button_font, command=self.click_ejecutar)
         btn_ejecutar.grid(row=2, column=1, padx=5, pady=5)
+        self.buttons.append(btn_ejecutar)
 
         btn_limpiar = tk.Button(frame_panel, text="Limpiar ", font=self.button_font, command=self.limpiar_registro)
         btn_limpiar.grid(row=3, column=1, padx=5, pady=5)
+        self.buttons.append(btn_limpiar)
 
         btn_agregar = tk.Button(frame_panel, text="Agregar ", font=self.button_font, command=self.agregar_fila)
         btn_agregar.grid(row=4, column=1, padx=5, pady=5)
+        self.buttons.append(btn_agregar)
 
         btn_quitar = tk.Button(frame_panel, text="  Quitar  ", font=self.button_font, command=self.quitar_ultima_fila)
         btn_quitar.grid(row=5, column=1, padx=5, pady=5)
+        self.buttons.append(btn_quitar)
 
     def enviar_home(self):
         if self.SerialPort1.isOpen():
@@ -158,6 +174,7 @@ class ControlBrazoRobot:
 
         btn_salir = tk.Button(frame_seccion_6, text=" Salir ", font=self.button_font, command=self.ventana.quit)
         btn_salir.pack(padx=5, pady=5)
+        self.buttons.append(btn_salir)
 
     def click_conectar(self):
         try:
@@ -303,6 +320,8 @@ class ControlBrazoRobot:
             self.texto_progreso.set("Finalizado")
             self.label_fila_actual.config(text="Todos los movimientos\n han sido ejecutados")
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
+            for button in self.buttons:
+                button.config(state=tk.NORMAL)
             return
 
         fila = self.tree.item(registros[indice])["values"]
@@ -320,6 +339,9 @@ class ControlBrazoRobot:
 
 
     def crear_ventana_progreso(self):
+        # Deshabilitar todos los botones
+        for button in self.buttons:
+            button.config(state=tk.DISABLED)
         self.ventana_progreso = Toplevel(self.ventana)
         self.ventana_progreso.title("Progreso")
         self.ventana_progreso.geometry("300x150")
@@ -336,9 +358,15 @@ class ControlBrazoRobot:
 
         self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
 
+
+    def cerrar_ventana_progreso(self):
+        self.ventana_progreso.destroy()
+        # Habilitar todos los botones
+        for button in self.buttons:
+            button.config(state=tk.NORMAL)
+
     def on_progreso_close(self):
         messagebox.showwarning("Advertencia", "No se puede cerrar esta ventana mientras se ejecutan los registros.")
-
 
 def main():
     ventana = tk.Tk()
