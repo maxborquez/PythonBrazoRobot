@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, Toplevel, StringVar
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 import serial
@@ -293,24 +293,50 @@ class ControlBrazoRobot:
             messagebox.showwarning(message="No hay registros para ejecutar")
             return
 
+        self.crear_ventana_progreso()
         self.ejecutar_registro(0, registros)
 
     def ejecutar_registro(self, indice, registros):
         if indice >= len(registros):
-            messagebox.showinfo(message="Todos los registros han sido ejecutados")
+            self.texto_progreso.set("Finalizado")
+            self.label_fila_actual.config(text="Todos los movimientos\n han sido ejecutados")
+            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
             return
 
         fila = self.tree.item(registros[indice])["values"]
         cadena = ",".join(map(str, fila))
         if self.SerialPort1.isOpen():
             self.SerialPort1.write(cadena.encode())
-            messagebox.showinfo(message=f"Registro {indice + 1} enviado: {cadena}")
+            self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 10 segundos")
         else:
-            messagebox.showwarning(message="El puerto no está conectado")
+            self.texto_progreso.set("Error: El puerto no está conectado")
+            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
             return
 
         # Llama a esta función nuevamente después de 10000 ms (10 segundos)
         self.ventana.after(10000, self.ejecutar_registro, indice + 1, registros)
+
+
+    def crear_ventana_progreso(self):
+        self.ventana_progreso = Toplevel(self.ventana)
+        self.ventana_progreso.title("Progreso")
+        self.ventana_progreso.geometry("300x150")
+        self.ventana_progreso.configure(bg=self.azul)
+
+        self.texto_progreso = StringVar()
+        self.texto_progreso.set("Ejecutando...")
+
+        label_progreso = tk.Label(self.ventana_progreso, textvariable=self.texto_progreso, bg=self.azul, fg='white', font=self.text_font)
+        label_progreso.pack(pady=20)
+
+        self.label_fila_actual = tk.Label(self.ventana_progreso, text="", bg=self.azul, fg='white', font=self.text_font)
+        self.label_fila_actual.pack(pady=20)
+
+        self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
+
+    def on_progreso_close(self):
+        messagebox.showwarning("Advertencia", "No se puede cerrar esta ventana mientras se ejecutan los registros.")
+
 
 def main():
     ventana = tk.Tk()
