@@ -14,7 +14,6 @@ class ControlBrazoRobot:
         self.ventana.title("Control brazo robotico")
         self.ventana.configure(bg=self.azul)
         self.ventana.geometry("1150x680")
-
         self.button_font = tkfont.Font(family="Arial", size=10, weight="bold")
         self.text_font = tkfont.Font(family="Arial", size=12, weight="bold")
 
@@ -118,7 +117,7 @@ class ControlBrazoRobot:
         if self.SerialPort1.isOpen():
             cadena_home = "90,0,0,0,90,90"
             self.SerialPort1.write(cadena_home.encode())
-            messagebox.showinfo(message=f"Posiciones home enviadas: {cadena_home}")
+            messagebox.showinfo(message=f"El robot se ha colocado\nen la posicion inicial\n {cadena_home}")
         else:
             messagebox.showwarning(message="El puerto no está conectado")
 
@@ -137,7 +136,7 @@ class ControlBrazoRobot:
 
         self.tree.pack(expand=True, fill='both')
 
-        self.label_cantidad_filas = tk.Label(self.frame_tabla_registros, text="Cantidad de filas: 0", bg=self.azul, fg='white', font=self.text_font)
+        self.label_cantidad_filas = tk.Label(self.frame_tabla_registros, text="Cantidad de movimientos registrados: 0", bg=self.azul, fg='white', font=self.text_font)
         self.label_cantidad_filas.pack(padx=5, pady=5)
 
     def seccion_6(self):
@@ -228,7 +227,7 @@ class ControlBrazoRobot:
             cantidad_filas = 0
             messagebox.showinfo("Información", f"Registro seleccionado vacío")
 
-        self.label_cantidad_filas.config(text=f"Cantidad de filas: {cantidad_filas}")
+        self.label_cantidad_filas.config(text=f"Cantidad de movimientos registrados: {cantidad_filas}")
 
     def seleccionar_registro(self, registro_id):
         self.registro_seleccionado = registro_id
