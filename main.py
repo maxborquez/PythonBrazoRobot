@@ -329,6 +329,8 @@ class ControlBrazoRobot:
         if self.SerialPort1.isOpen():
             self.SerialPort1.write(cadena.encode())
             self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 10 segundos")
+            btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font)
+            btn_interrumpir.pack(pady=5)
         else:
             self.texto_progreso.set("Error: El puerto no está conectado")
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
@@ -344,7 +346,7 @@ class ControlBrazoRobot:
             button.config(state=tk.DISABLED)
         self.ventana_progreso = Toplevel(self.ventana)
         self.ventana_progreso.title("Progreso")
-        self.ventana_progreso.geometry("300x150")
+        self.ventana_progreso.geometry("300x200")
         self.ventana_progreso.configure(bg=self.azul)
 
         self.texto_progreso = StringVar()
