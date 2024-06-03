@@ -328,26 +328,33 @@ class ControlBrazoRobot:
         cadena = ",".join(map(str, fila))
         if self.SerialPort1.isOpen():
             self.SerialPort1.write(cadena.encode())
-            self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 10 segundos")
-            btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font)
-            btn_interrumpir.pack(pady=5)
+            self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 2 segundos")
         else:
             self.texto_progreso.set("Error: El puerto no está conectado")
+            for button in self.buttons:
+                button.config(state=tk.NORMAL)
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
             return
 
-        # Llama a esta función nuevamente después de 10000 ms (10 segundos)
-        self.ventana.after(10000, self.ejecutar_registro, indice + 1, registros)
+        # Llama a esta función nuevamente después de 20000 ms (2 segundos)
+        self.ventana.after(2000, self.ejecutar_registro, indice + 1, registros)
 
 
     def crear_ventana_progreso(self):
         # Deshabilitar todos los botones
         for button in self.buttons:
             button.config(state=tk.DISABLED)
+
         self.ventana_progreso = Toplevel(self.ventana)
         self.ventana_progreso.title("Progreso")
         self.ventana_progreso.geometry("300x200")
         self.ventana_progreso.configure(bg=self.azul)
+
+        # Configurar la ventana de progreso como transitoria de la ventana principal
+        self.ventana_progreso.transient(self.ventana)
+
+        # Evitar que se modifique el tamaño
+        self.ventana_progreso.resizable(False, False)
 
         self.texto_progreso = StringVar()
         self.texto_progreso.set("Ejecutando...")
@@ -357,6 +364,9 @@ class ControlBrazoRobot:
 
         self.label_fila_actual = tk.Label(self.ventana_progreso, text="", bg=self.azul, fg='white', font=self.text_font)
         self.label_fila_actual.pack(pady=20)
+
+        btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font)
+        btn_interrumpir.pack(pady=5)
 
         self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
 
