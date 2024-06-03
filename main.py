@@ -19,6 +19,7 @@ class ControlBrazoRobot:
 
         self.SerialPort1 = serial.Serial()
         self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
+        self.ejecutando = True  # Estado de ejecución
         self.buttons = []  # Lista para almacenar todos los botones
         self.create_widgets()
 
@@ -316,9 +317,16 @@ class ControlBrazoRobot:
         self.ejecutar_registro(0, registros)
 
     def ejecutar_registro(self, indice, registros):
+        if not self.ejecutando:
+            for button in self.buttons:
+                button.config(state=tk.NORMAL)
+            self.ejecutando = True
+            return
+
         if indice >= len(registros):
             self.texto_progreso.set("Finalizado")
             self.label_fila_actual.config(text="Todos los movimientos\n han sido ejecutados")
+            self.btn_interrumpir.config(state=tk.DISABLED)
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
             for button in self.buttons:
                 button.config(state=tk.NORMAL)
@@ -365,14 +373,20 @@ class ControlBrazoRobot:
         self.label_fila_actual = tk.Label(self.ventana_progreso, text="", bg=self.azul, fg='white', font=self.text_font)
         self.label_fila_actual.pack(pady=20)
 
-        btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font)
-        btn_interrumpir.pack(pady=5)
+        self.btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font, command=self.interrumpir_ejecucion)
+        self.btn_interrumpir.pack(pady=5)
 
         self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
 
 
     def on_progreso_close(self):
         messagebox.showwarning("Advertencia", "No se puede cerrar esta ventana mientras se ejecutan los registros.")
+
+    def interrumpir_ejecucion(self):
+        self.ejecutando = False
+        for button in self.buttons:
+            button.config(state=tk.NORMAL)
+        self.ventana_progreso.destroy()
 
 def main():
     ventana = tk.Tk()
