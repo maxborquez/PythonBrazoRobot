@@ -318,8 +318,8 @@ class ControlBrazoRobot:
 
     def ejecutar_registro(self, indice, registros):
         if not self.ejecutando:
-            for button in self.buttons:
-                button.config(state=tk.NORMAL)
+            #for button in self.buttons:
+            #    button.config(state=tk.NORMAL)
             self.ejecutando = True
             return
 
@@ -327,9 +327,7 @@ class ControlBrazoRobot:
             self.texto_progreso.set("Finalizado")
             self.label_fila_actual.config(text="Todos los movimientos\n han sido ejecutados")
             self.btn_interrumpir.config(state=tk.DISABLED)
-            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
-            for button in self.buttons:
-                button.config(state=tk.NORMAL)
+            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_closing)  # Permitir cerrar la ventana
             return
 
         fila = self.tree.item(registros[indice])["values"]
@@ -341,7 +339,7 @@ class ControlBrazoRobot:
             self.texto_progreso.set("Error: El puerto no está conectado")
             for button in self.buttons:
                 button.config(state=tk.NORMAL)
-            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.ventana_progreso.destroy)  # Permitir cerrar la ventana
+            self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_closing)  # Permitir cerrar la ventana
             return
 
         # Llama a esta función nuevamente después de 20000 ms (2 segundos)
@@ -376,17 +374,23 @@ class ControlBrazoRobot:
         self.btn_interrumpir = tk.Button(self.ventana_progreso, text="Interrumpir", font=self.button_font, command=self.interrumpir_ejecucion)
         self.btn_interrumpir.pack(pady=5)
 
-        self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_progreso_close)  # Desactivar el cierre de la ventana temporalmente
+        self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_ejecucion_closing)  # Desactivar el cierre de la ventana temporalmente
 
 
-    def on_progreso_close(self):
+    def on_ejecucion_closing(self):
         messagebox.showwarning("Advertencia", "No se puede cerrar esta ventana mientras se ejecutan los registros.")
 
     def interrumpir_ejecucion(self):
         self.ejecutando = False
+        self.texto_progreso.set("Advertencia")
+        self.label_fila_actual.config(text="El proceso ha\n sido interrupido por el usuario")
+        self.btn_interrumpir.config(state=tk.DISABLED)
+        self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+    def on_closing(self):
+        self.ventana_progreso.destroy()
         for button in self.buttons:
             button.config(state=tk.NORMAL)
-        self.ventana_progreso.destroy()
 
 def main():
     ventana = tk.Tk()
