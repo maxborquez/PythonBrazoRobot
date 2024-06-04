@@ -342,8 +342,8 @@ class ControlBrazoRobot:
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_closing)  # Permitir cerrar la ventana
             return
 
-        # Llama a esta función nuevamente después de 20000 ms (2 segundos)
-        self.ventana.after(2000, self.ejecutar_registro, indice + 1, registros)
+        # Llama a esta función nuevamente después de 5000 ms (5 segundos)
+        self.ventana.after(5000, self.ejecutar_registro, indice + 1, registros)
 
 
     def crear_ventana_progreso(self):

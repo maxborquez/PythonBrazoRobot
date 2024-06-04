@@ -12,6 +12,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // Array para almacenar el ángulo actual de cada servo
 float currentAngle[6] = {90, 0, 0, 0, 90, 90}; // Iniciar todos los servos a 90 grados
 
+// Array para almacenar los ángulos de la posición base
+float basePosition[6] = {90, 0, 0, 0, 90, 90};
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Iniciando PCA9685...");
@@ -23,7 +26,29 @@ void setup() {
   pwm.setPWMFreq(60);
 
   delay(10);
+
+  // Mover los servos a la posición base suavemente
+  for (int i = 1; i <= 6; i++) {
+    float current = currentAngle[i - 1];
+    float target = basePosition[i - 1];
+    float step = 1; // Paso de incremento de ángulo
+
+    if (current < target) {
+      for (float angle = current; angle <= target; angle += step) {
+        setServoAngle(i, angle);
+        delay(DELAY_TIME);
+      }
+    } else {
+      for (float angle = current; angle >= target; angle -= step) {
+        setServoAngle(i, angle);
+        delay(DELAY_TIME);
+      }
+    }
+
+    currentAngle[i - 1] = target; // Actualiza el ángulo actual
+  }
 }
+
 
 // Función para convertir grados a pulsos
 uint16_t degreesToPulse(float degrees) {
@@ -58,29 +83,46 @@ void smoothMove(uint8_t servo, float startAngle, float endAngle, int stepDelay) 
 void loop() {
   // Verifica si hay datos disponibles en el puerto serial
   if (Serial.available()) {
-    // Lee el número del servo (0-5)
-    int servo = Serial.parseInt();
-    // Lee el ángulo al que se debe mover el servo (0-180)
-    int angle = Serial.parseInt();
+    // Leer la cadena de entrada
+    String input = Serial.readStringUntil('\n');
 
-    // Asegúrate de que el número del servo y el ángulo sean válidos
-    if (servo >= 1 && servo <= 6 && angle >= 0 && angle <= 180) {
-      Serial.print("Moviendo el servo ");
-      Serial.print(servo);
-      Serial.print(" a ");
-      Serial.print(angle);
-      Serial.println(" grados.");
+    // Array para almacenar los ángulos de los servos
+    float targetAngles[6];
 
-      // Mueve el servo suavemente al ángulo especificado desde su ángulo actual
-      smoothMove(servo, currentAngle[servo], angle, DELAY_TIME);
-      currentAngle[servo] = angle; // Actualiza el ángulo actual
-    } else {
-      Serial.println("Entrada no válida. Por favor ingrese un número de servo (0-5) seguido por un ángulo (0-180).");
+    // Separar la cadena por comas y convertir a float
+    int i = 0;
+    int startIndex = 0;
+    while (i < 6) {
+      int commaIndex = input.indexOf(',', startIndex);
+      if (commaIndex == -1) {
+        commaIndex = input.length();
+      }
+
+      if (commaIndex == startIndex) {
+        Serial.println("Entrada no válida. Asegúrate de que todos los ángulos estén presentes y separados por comas.");
+        return;
+      }
+
+      targetAngles[i] = input.substring(startIndex, commaIndex).toFloat();
+      if (targetAngles[i] < 0 || targetAngles[i] > 180) {
+        Serial.println("Entrada no válida. Asegúrate de que todos los ángulos estén en el rango de 0 a 180 grados.");
+        return;
+      }
+
+      startIndex = commaIndex + 1;
+      i++;
     }
 
-    // Limpiar el buffer serial
-    while (Serial.available()) {
-      Serial.read();
+    // Mover cada servo al ángulo especificado
+    for (int j = 0; j < 6; j++) {
+      Serial.print("Moviendo el servo ");
+      Serial.print(j + 1); // Se suma 1 para que los servos se muestren del 1 al 6
+      Serial.print(" a ");
+      Serial.print(targetAngles[j]);
+      Serial.println(" grados.");
+      smoothMove(j + 1, currentAngle[j], targetAngles[j], DELAY_TIME); // Se suma 1 para que los servos se muevan del 1 al 6
+      currentAngle[j] = targetAngles[j]; // Actualiza el ángulo actual
     }
   }
 }
+
