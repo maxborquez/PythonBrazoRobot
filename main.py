@@ -132,9 +132,9 @@ class ControlBrazoRobot:
 
     def enviar_home(self):
         if self.SerialPort1.isOpen():
-            cadena_home = "90,0,0,0,90,90"
+            cadena_home = "Home"
             self.SerialPort1.write(cadena_home.encode())
-            messagebox.showinfo(message=f"El robot se ha colocado\nen la posicion inicial\n {cadena_home}")
+            messagebox.showinfo(message=f"El robot se ha colocado\nen la posicion inicial")
         else:
             messagebox.showwarning(message="El puerto no está conectado")
 
