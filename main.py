@@ -18,6 +18,7 @@ class ControlBrazoRobot:
         self.text_font = tkfont.Font(family="Arial", size=12, weight="bold")
 
         self.SerialPort1 = serial.Serial()
+
         self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
         self.ejecutando = True  # Estado de ejecución
         self.buttons = []  # Lista para almacenar todos los botones
@@ -180,7 +181,7 @@ class ControlBrazoRobot:
     def click_conectar(self):
         try:
             self.SerialPort1.port = self.combo_com.get()
-            self.SerialPort1.baudrate = 9600
+            self.SerialPort1.baudrate = 115200
             self.SerialPort1.open()
             self.label_estado.configure(text="Conectado", bg=self.verde)
         except:
@@ -334,7 +335,7 @@ class ControlBrazoRobot:
         cadena = ",".join(map(str, fila))
         if self.SerialPort1.isOpen():
             self.SerialPort1.write(cadena.encode())
-            self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 2 segundos")
+            self.label_fila_actual.config(text=f"Movimiento actual: {indice + 1} \n Espere 12 segundos")
         else:
             self.texto_progreso.set("Error: El puerto no está conectado")
             for button in self.buttons:
@@ -342,8 +343,8 @@ class ControlBrazoRobot:
             self.ventana_progreso.protocol("WM_DELETE_WINDOW", self.on_closing)  # Permitir cerrar la ventana
             return
 
-        # Llama a esta función nuevamente después de 5000 ms (5 segundos)
-        self.ventana.after(5000, self.ejecutar_registro, indice + 1, registros)
+        # Llama a esta función nuevamente después de 12000 ms (12 segundos)
+        self.ventana.after(14000, self.ejecutar_registro, indice + 1, registros)
 
 
     def crear_ventana_progreso(self):
