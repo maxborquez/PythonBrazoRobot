@@ -351,7 +351,8 @@ void setServo(uint8_t n_servo, int angulo)
         lcd.print("Angulo:");
         lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
     }
-    else{
+    else
+    {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("ERROR");
@@ -369,7 +370,7 @@ void setup()
     servos.setPWMFreq(50);
     Serial.begin(115200);
     moveAllServosToHome();
-    lcd.begin(16, 2);      // Configurar la pantalla LCD como 16x2
+    lcd.begin(16, 2); // Configurar la pantalla LCD como 16x2
 
     // Mostrar un mensaje de bienvenida en la pantalla LCD
     lcd.clear();
@@ -405,13 +406,20 @@ void loop()
             }
         }
 
-        if (data == "Detener")
+        if (data.startsWith("s"))
         {
             lcd.clear();
             lcd.setCursor(0, 0);
             lcd.print("Dato Recibido:");
             lcd.setCursor(0, 1);
-            lcd.print("Detener OK");
+
+            // Extraer los números del comando
+            int n1, n2;
+            if (sscanf(data.c_str(), "s%d,%d", &n1, &n2) == 2)
+            {
+                lcd.print("Mover servo %d a %d",n1,n2);
+                setServo(n1, n2);
+            }
         }
 
         // Verificar si el comando es "Home"
@@ -423,66 +431,6 @@ void loop()
             lcd.setCursor(0, 1);
             lcd.print("Posicion Home");
             moveAllServosToHome();
-        }
-
-        // Verificar si el comando es "Ejecutando XYZ"
-        if (data == "Ejecutando XYZ")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Ejecutando XYZ");
-        }
-
-        // Verificar si el comando es "Ejecutando JOING"
-        if (data == "Ejecutando JOING")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Ejecutando JOING");
-        }
-
-        // Verificar si el comando es "Ejecutar"
-        if (data == "Ejecutar")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Ejecucion OK");
-        }
-
-        // Verificar si el comando es "Limpiar"
-        if (data == "Limpiar")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Limpiar OK");
-        }
-
-        // Verificar si el comando es "Posicionar"
-        if (data == "Posicionar")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Posicionar OK");
-        }
-
-        // Verificar si el comando es "Registro"
-        else if (data == "Registro")
-        {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Dato Recibido:");
-            lcd.setCursor(0, 1);
-            lcd.print("Registro OK");
         }
     }
 }
