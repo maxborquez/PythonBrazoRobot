@@ -404,20 +404,6 @@ void loop()
                 delay(2000);
             }
         }
-        /*
-        else
-        {
-            // Separar el comando en el número de servo y el ángulo
-            int servo = data.substring(0, 1).toInt();
-            int angulo = data.substring(2).toInt();
-
-            // Almacenar la última posición establecida para el servo correspondiente
-            lastSetPos[servo] = angulo;
-
-            // Mover el servo correspondiente a la posición deseada
-            setServo(servo, angulo);
-        }
-        */
 
         if (data == "Detener")
         {
@@ -498,20 +484,5 @@ void loop()
             lcd.setCursor(0, 1);
             lcd.print("Registro OK");
         }
-
-        /*
-        else
-        {
-            // Separar el comando en el número de servo y el ángulo
-            int servo = data.substring(0, 1).toInt();
-            int angulo = data.substring(2).toInt();
-
-            // Almacenar la última posición establecida para el servo correspondiente
-            lastSetPos[servo] = angulo;
-
-            // Mover el servo correspondiente a la posición deseada
-            setServo(servo, angulo);
-        }
-        */
     }
 }

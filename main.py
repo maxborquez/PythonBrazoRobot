@@ -19,6 +19,11 @@ class ControlBrazoRobot:
 
         self.SerialPort1 = serial.Serial()
 
+         # Variables para el select y el cuadro de entrada
+        self.servo_var = tk.StringVar(self.ventana)
+        self.servo_var.set("1")  # valor inicial
+        self.entry_angulo = tk.Entry(self.ventana)
+
         self.registro_seleccionado = None  # Variable para almacenar el registro seleccionado
         self.ejecutando = True  # Estado de ejecución
         self.buttons = []  # Lista para almacenar todos los botones
@@ -26,7 +31,7 @@ class ControlBrazoRobot:
 
     def create_widgets(self):
         self.seccion_conexion()
-        self.seccion_2()
+        self.seccion_un_servo()
         self.seccion_servos()
         self.seccion_panel()
         self.tabla_registros()
@@ -55,15 +60,57 @@ class ControlBrazoRobot:
         self.buttons.append(btn_desconectar)
 
 
-    def seccion_2(self):
-        label_seccion_2 = tk.Label(self.ventana, text="Sección 2", bg=self.azul, fg='white', font=self.text_font)
-        label_seccion_2.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
+    def seccion_un_servo(self):
+        # Etiqueta de Sección 2
+        label_seccion_un_servo = tk.Label(self.ventana, text="Mover un servo", bg=self.azul, fg='white', font=self.text_font)
+        label_seccion_un_servo.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
 
-        frame_seccion_2 = tk.Frame(self.ventana, bg=self.azul)
-        frame_seccion_2.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
+        # Frame de Sección 2
+        frame_seccion_un_servo = tk.Frame(self.ventana, bg=self.azul)
+        frame_seccion_un_servo.grid(row=1, column=1, padx=10, pady=5, sticky="nw")
+
+        # Etiqueta para el select de servo
+        label_servo = tk.Label(frame_seccion_un_servo, text="Seleccione un servo", bg=self.azul, fg='white', font=self.text_font)
+        label_servo.grid(row=0, column=0, padx=10, pady=5, sticky="nw")
+
+        # Select para el servo (1 al 6)
+        select_servo = tk.OptionMenu(frame_seccion_un_servo, self.servo_var, "1", "2", "3", "4", "5", "6")
+        select_servo.grid(row=0, column=1, padx=10, pady=5, sticky="nw")
+
+        # Etiqueta para el ángulo
+        label_angulo = tk.Label(frame_seccion_un_servo, text="Ángulo", bg=self.azul, fg='white', font=self.text_font)
+        label_angulo.grid(row=0, column=2, padx=10, pady=5, sticky="nw")
+
+        # Cuadro de entrada para el ángulo
+        self.entry_angulo = tk.Entry(frame_seccion_un_servo)
+        self.entry_angulo.grid(row=0, column=3, padx=10, pady=5, sticky="nw")
+
+        # Botón Mover
+        boton_mover = tk.Button(frame_seccion_un_servo, text="Mover", command=self.mover_servo_independiente)
+        boton_mover.grid(row=0, column=4, padx=10, pady=5, sticky="nw")
+
+
+    def mover_servo_independiente(self):
+        servo = self.servo_var.get()
+        angulo = self.entry_angulo.get()
+        
+        # Validar que el ángulo sea un número válido entre 0 y 180
+        try:
+            angulo = int(angulo)
+            if angulo < 0 or angulo > 180:
+                raise ValueError("El ángulo debe estar entre 0 y 180")
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+        
+        cadena = f"s{servo},{angulo}"
+        print(f"Enviando: {cadena}")
+        
+        # Enviar la cadena a través del puerto serial
+        self.SerialPort1.write(cadena.encode())     
 
     def seccion_servos(self):
-        label_servos = tk.Label(self.ventana, text="Servomotores", bg=self.azul, fg='white', font=self.text_font)
+        label_servos = tk.Label(self.ventana, text="Mover seis servos", bg=self.azul, fg='white', font=self.text_font)
         label_servos.grid(row=0, column=2, padx=10, pady=5, sticky="nw")
 
         frame_servos = tk.Frame(self.ventana, bg=self.azul)
@@ -85,7 +132,7 @@ class ControlBrazoRobot:
         self.buttons.append(btn_mover)
 
     def seccion_panel(self):
-        label_panel = tk.Label(self.ventana, text="Panel", bg=self.azul, fg='white', font=self.text_font)
+        label_panel = tk.Label(self.ventana, text="Panel de registros", bg=self.azul, fg='white', font=self.text_font)
         label_panel.grid(row=2, column=0, padx=10, pady=5, sticky="nw")
 
         frame_panel = tk.Frame(self.ventana, bg=self.azul)
