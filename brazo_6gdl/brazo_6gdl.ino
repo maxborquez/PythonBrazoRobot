@@ -53,6 +53,12 @@ void moveAllServosToHome()
 void setServo(uint8_t n_servo, int angulo)
 {
     int duty;
+    int delayTime = 50; // Tiempo de retardo en milisegundos
+    int stepDelay = 50; // Tiempo de retardo entre cada paso en milisegundos
+    int steps = 30;     // Número de pasos para la transición
+    int currentAngle = lastSetPos[n_servo];
+    int targetAngle = angulo;
+    int stepSize = (targetAngle - currentAngle) / steps;
 
     // Limitar los ángulos servos 2 y 3
     if (n_servo == 2)
@@ -279,86 +285,103 @@ void setServo(uint8_t n_servo, int angulo)
         }
     }
 
+    // Ajustar Servos
     if (n_servo == 1)
-    { // Ajustar Servos
-        duty = map(angulo, 0, 180, pos0_S1, pos180_S1);
-        // Mostrar en LCD el mensaje recibido
+    {
+        duty = map(currentAngle, 0, 180, pos0_S1, pos180_S1);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else if (n_servo == 2)
     {
-        duty = map(angulo, 0, 180, pos0_S2, pos180_S2);
-        // Mostrar en LCD el mensaje recibido
+        duty = map(currentAngle, 0, 180, pos0_S2, pos180_S2);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else if (n_servo == 3)
     {
-        duty = map(angulo, 0, 180, pos0_S3, pos180_S3);
-        // Mostrar en LCD el mensaje recibido
+        duty = map(currentAngle, 0, 180, pos0_S3, pos180_S3);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else if (n_servo == 4)
     {
-        duty = map(angulo, 0, 180, pos0_S4, pos180_S4);
-        // Mostrar en LCD el mensaje recibido
+        duty = map(currentAngle, 0, 180, pos0_S4, pos180_S4);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else if (n_servo == 5)
     {
-        duty = map(angulo, 0, 180, pos0_S5, pos180_S5);
-        // Mostrar en LCD el mensaje recibido
+        duty = map(currentAngle, 0, 180, pos0_S5, pos180_S5);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else if (n_servo == 6)
     {
-        duty = map(angulo, 0, 180, pos0_S5, pos180_S5);
-        // Mostrar en LCD el mensaje recibido
+        duty = map(currentAngle, 0, 180, pos0_S6, pos180_S6);
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Servo: ");
-        lcd.print(n_servo); // Imprime el primer dígito que es el servo
+        lcd.print(n_servo);
         lcd.setCursor(0, 1);
         lcd.print("Angulo:");
-        lcd.print(angulo); // Imprime el segundo dígito que es el ángulo
+        lcd.print(currentAngle);
     }
     else
     {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("ERROR");
+        return;
     }
 
-    servos.setPWM(n_servo, 0, duty);
+    // Mover el servo en pasos graduales
+    for (int i = 0; i < steps; i++)
+    {
+        // Actualizar la posición actual en cada paso
+        currentAngle += stepSize;
+        if ((stepSize > 0 && currentAngle > targetAngle) || (stepSize < 0 && currentAngle < targetAngle))
+        {
+            currentAngle = targetAngle;
+        }
+        duty = map(currentAngle, 0, 180, (n_servo == 1) ? pos0_S1 : (n_servo == 2) ? pos0_S2
+                                                                : (n_servo == 3)   ? pos0_S3
+                                                                : (n_servo == 4)   ? pos0_S4
+                                                                : (n_servo == 5)   ? pos0_S5
+                                                                                   : pos0_S6,
+                   (n_servo == 1) ? pos180_S1 : (n_servo == 2) ? pos180_S2
+                                            : (n_servo == 3)   ? pos180_S3
+                                            : (n_servo == 4)   ? pos180_S4
+                                            : (n_servo == 5)   ? pos180_S5
+                                                               : pos180_S6);
+        servos.setPWM(n_servo, 0, duty);
+        delay(stepDelay); // Esperar antes del siguiente paso
+    }
 
     // Actualizar el arreglo de posiciones establecidas
     lastSetPos[n_servo] = angulo;
