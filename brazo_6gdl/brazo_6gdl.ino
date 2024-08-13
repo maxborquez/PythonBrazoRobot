@@ -417,7 +417,10 @@ void loop()
             int n1, n2;
             if (sscanf(data.c_str(), "s%d,%d", &n1, &n2) == 2)
             {
-                lcd.print("Mover servo %d a %d",n1,n2);
+                lcd.print("Mover servo");
+                lcd.print(n1);
+                lcd.print(" a ");
+                lcd.print(n2);
                 setServo(n1, n2);
             }
         }
